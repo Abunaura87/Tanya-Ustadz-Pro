@@ -1,0 +1,6 @@
+{
+  "name": "Tanya Ustadz Pro",
+  "description": "Asisten Digital Konsultasi Keagamaan Ilmiah Berbasis Dalil & Kitab Mu'tabar",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

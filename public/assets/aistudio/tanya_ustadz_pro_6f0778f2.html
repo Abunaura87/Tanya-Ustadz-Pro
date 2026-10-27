@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanya Ustadz Pro - Konsultasi Keagamaan Ilmiah Berbasis Dalil & Kitab</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter untuk UI & Amiri untuk Teks Arab/Dalil -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        arabic: ['"Amiri"', 'serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            line-height: 2.3;
+            direction: rtl;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-6 px-3 sm:px-6 lg:px-8 antialiased selection:bg-emerald-600 selection:text-white">
+
+    <!-- Container Utama -->
+    <div class="max-w-3xl mx-auto space-y-6">
+
+        <!-- Header Card / Branding (Gaya DaiAI Pro) -->
+        <header class="text-center pt-4 pb-2">
+            <div class="inline-flex items-center justify-center gap-3.5 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-600/25">
+                    <i class="ph-bold ph-book-open-text text-2xl"></i>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-800">
+                    Tanya<span class="text-emerald-600">Ustadz</span> <span class="text-xs align-top font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">PRO</span>
+                </h1>
+            </div>
+            <p class="text-slate-500 font-medium text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+                Asisten Digital Konsultasi Keagamaan Ilmiah Berbasis Dalil & Kitab Mu'tabar
+            </p>
+        </header>
+
+        <!-- Card 1: Parameter Pertanyaan -->
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 sm:p-8 no-print">
+            <!-- Judul Seksi -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2.5">
+                    <i class="ph-fill ph-sparkle text-emerald-600 text-2xl"></i>
+                    <h2 class="text-xl font-bold text-slate-800">Parameter Pertanyaan</h2>
+                </div>
+                <button type="button" id="btnSampleQuestion" class="text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                    <i class="ph-bold ph-magic-wand"></i> Contoh Pertanyaan
+                </button>
+            </div>
+
+            <form id="qaForm" class="space-y-5">
+                <!-- Kotak Pertanyaan -->
+                <div>
+                    <label for="questionInput" class="block text-sm font-bold text-slate-700 mb-2">
+                        Pertanyaan / Permasalahan Anda
+                    </label>
+                    <textarea
+                        id="questionInput"
+                        rows="4"
+                        required
+                        placeholder="Contoh: Bagaimana hukum transaksi jual beli sistem dropshipping dalam tinjauan fiqh muamalah? Atau bagaimana hukum sholat memakai parfum beralkohol?"
+                        class="w-full rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 text-slate-800 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10 outline-none transition text-sm sm:text-base resize-y"
+                    ></textarea>
+                </div>
+
+                <!-- Pilihan Dropdown Referensi Pengambilan Dalil (Multi-Select Dropdown + Badges) -->
+                <div class="relative" id="referenceDropdownContainer">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-bold text-slate-700">
+                            Pilih Sumber Referensi Dalil <span class="text-emerald-600 font-normal text-xs">(Bisa pilih satu atau banyak)</span>
+                        </label>
+                        <button type="button" id="toggleAllRefs" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
+                            Pilih Semua
+                        </button>
+                    </div>
+
+                    <!-- Tombol Trigger Dropdown -->
+                    <button
+                        type="button"
+                        id="refDropdownButton"
+                        class="w-full rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-white px-4 py-3.5 text-left flex items-center justify-between focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10 transition"
+                    >
+                        <div class="flex items-center gap-2.5 overflow-hidden">
+                            <i class="ph-duotone ph-books text-emerald-600 text-xl shrink-0"></i>
+                            <span id="refDropdownSummary" class="font-semibold text-slate-700 text-sm sm:text-base truncate">
+                                7 Referensi Dipilih (Lengkap)
+                            </span>
+                        </div>
+                        <i id="refDropdownChevron" class="ph-bold ph-caret-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+
+                    <!-- Menu Dropdown Checkbox -->
+                    <div
+                        id="refDropdownMenu"
+                        class="hidden absolute z-30 mt-2 w-full rounded-2xl bg-white shadow-xl border border-slate-200 p-2 space-y-1 max-h-80 overflow-y-auto"
+                    >
+                        <!-- Opsi 1: Al-Qur'an -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Al-Qur'an" data-label="Al-Qur'an" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">1. Al-Qur'an Al-Karim</div>
+                                <div class="text-xs text-slate-500">Ayat Al-Qur'an beserta Tafsir Mu'tabar (Ibnu Katsir, Al-Qurtubi, Al-Jalalain, dll.)</div>
+                            </div>
+                        </label>
+
+                        <!-- Opsi 2: Al-Hadits -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Al-Hadits" data-label="Al-Hadits" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">2. Al-Hadits An-Nabawi</div>
+                                <div class="text-xs text-slate-500">Kutubus Sittah, Musnad & Syarah Hadits beserta status derajat hadits</div>
+                            </div>
+                        </label>
+
+                        <!-- Opsi 3: Qoul Sahabat -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Qoul Sahabat" data-label="Qoul Sahabat" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">3. Qoul Sahabat</div>
+                                <div class="text-xs text-slate-500">Atsar Khulafaur Rasyidin, Sahabat Nabi & Tabi'in</div>
+                            </div>
+                        </label>
+
+                        <!-- Opsi 4: Qoul Imam Madzhab -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Qoul Imam Madzhab" data-label="Qoul Imam Madzhab" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">4. Qoul Imam Madzhab</div>
+                                <div class="text-xs text-slate-500">Pandangan 4 Imam Madzhab (Hanafi, Maliki, Syafi'i, Hanbali)</div>
+                            </div>
+                        </label>
+
+                        <!-- Opsi 5: Ulama' / Hukama' Semua Bidang -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Ulama'/Hukama' Semua Bidang Ilmu Agama" data-label="Ulama'/Hukama' Klasik" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">5. Ulama' / Hukama' (Semua Bidang Ilmu Agama)</div>
+                                <div class="text-xs text-slate-500">Kitab Turats Aqidah, Fiqh, Ushul Fiqh, Tasawuf/Hikmah, Tarikh & Adab</div>
+                            </div>
+                        </label>
+
+                        <!-- Opsi 6: Ulama Kontemporer / Modern -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Pendapat Ulama Kontemporer/Modern" data-label="Ulama Kontemporer" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">6. Pendapat Ulama Kontemporer / Modern</div>
+                                <div class="text-xs text-slate-500">Fatwa MUI, Lajnah Bahtsul Masail, Majma' Fiqh Islami, Dar al-Ifta, Ulama Modern</div>
+                            </div>
+                        </label>
+
+                        <!-- Opsi 7: Pendapat Ahli Sesuai Pertanyaan -->
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl hover:bg-emerald-50/60 cursor-pointer transition">
+                            <input type="checkbox" name="refSource" value="Pendapat Ahli Sesuai Pertanyaan" data-label="Pendapat Ahli Terkait" checked class="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm text-slate-800">7. Pendapat Ahli Sesuai Pertanyaan</div>
+                                <div class="text-xs text-slate-500">Tinjauan pakar Medis, Ekonomi Keuangan, Sains, Psikologi, atau Teknologi terkait</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Chip / Badge Referensi Aktif -->
+                    <div id="activeRefBadges" class="flex flex-wrap gap-1.5 mt-3"></div>
+                </div>
+
+                <!-- 2 Kolom Dropdown Tambahan: Fokus Madzhab & Kedalaman -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div>
+                        <label for="madzhabSelect" class="block text-sm font-bold text-slate-700 mb-2">
+                            Fokus Madzhab Fiqh
+                        </label>
+                        <div class="relative">
+                            <select
+                                id="madzhabSelect"
+                                class="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 pr-10 font-semibold text-slate-700 text-sm sm:text-base focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10 outline-none transition"
+                            >
+                                <option value="Madzhab Syafi'i (Utama) & Perbandingan 4 Madzhab">Syafi'i & Muqaranah (4 Madzhab)</option>
+                                <option value="Khusus Madzhab Syafi'i">Fokus Madzhab Syafi'i</option>
+                                <option value="Perbandingan Lintas 4 Madzhab (Hanafi, Maliki, Syafi'i, Hanbali)">Perbandingan 4 Madzhab</option>
+                                <option value="Madzhab Hanafi">Fokus Madzhab Hanafi</option>
+                                <option value="Madzhab Maliki">Fokus Madzhab Maliki</option>
+                                <option value="Madzhab Hanbali">Fokus Madzhab Hanbali</option>
+                            </select>
+                            <i class="ph-bold ph-caret-down text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="depthSelect" class="block text-sm font-bold text-slate-700 mb-2">
+                            Kedalaman Pemaparan
+                        </label>
+                        <div class="relative">
+                            <select
+                                id="depthSelect"
+                                class="w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3.5 pr-10 font-semibold text-slate-700 text-sm sm:text-base focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10 outline-none transition"
+                            >
+                                <option value="Tingkat Tinggi (Tahqiq Ilmiah, Ibarat Kitab Asli Lengkap Harakat, Juz/Halaman & Analisis Ushul)">Tahqiq Mendalam (Kitab & Dalil Lengkap)</option>
+                                <option value="Moderat & Edukatif (Dalil Utama, Terjemah & Penjelasan Mudah Dipahami)">Edukatif & Mudah Dipahami</option>
+                                <option value="Ringkas & Praktis (Langsung Inti Hukum & Dalil Pokok)">Ringkas & Praktis</option>
+                            </select>
+                            <i class="ph-bold ph-caret-down text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pesan Peringatan Validasi (Tanpa Alert) -->
+                <div id="validationMessage" class="hidden rounded-2xl bg-amber-50 border border-amber-200 p-3.5 text-amber-800 text-sm flex items-center gap-2.5">
+                    <i class="ph-fill ph-warning-circle text-lg shrink-0 text-amber-600"></i>
+                    <span id="validationText">Pilih minimal satu referensi pengambilan dalil.</span>
+                </div>
+
+                <!-- Tombol Submit Utama -->
+                <div class="pt-2">
+                    <button
+                        type="submit"
+                        id="submitBtn"
+                        class="w-full rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold py-4 px-6 shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2.5 text-base"
+                    >
+                        <i class="ph-bold ph-paper-plane-tilt text-xl" id="submitIcon"></i>
+                        <span id="submitBtnText">Paparkan Jawaban & Dalil Kitab</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Card 2: Hasil Jawaban & Dalil -->
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <!-- Header Card Hasil -->
+            <div class="p-5 sm:px-8 sm:py-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                    <i class="ph-bold ph-book-open text-emerald-600 text-2xl"></i>
+                    <h2 class="text-xl font-bold text-slate-800">Hasil Bahtsul & Paparan Dalil</h2>
+                </div>
+
+                <!-- Action Buttons (Muncul saat hasil sudah ada) -->
+                <div id="resultActions" class="hidden items-center gap-2 no-print">
+                    <button
+                        type="button"
+                        id="copyResultBtn"
+                        class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-3 py-2 rounded-xl transition"
+                    >
+                        <i class="ph-bold ph-copy"></i>
+                        <span id="copyBtnLabel">Salin Teks</span>
+                    </button>
+                    <button
+                        type="button"
+                        onclick="window.print()"
+                        class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-3 py-2 rounded-xl transition"
+                    >
+                        <i class="ph-bold ph-printer"></i>
+                        Cetak / PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- State 1: Empty State (Persis Seperti Referensi Gambar) -->
+            <div id="emptyState" class="py-16 px-6 text-center">
+                <div class="w-24 h-24 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto mb-5 text-slate-300">
+                    <i class="ph-bold ph-chat-centered-text text-5xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-400 mb-1.5">Menunggu Pertanyaan</h3>
+                <p class="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
+                    Jawaban ilmiah beserta kutipan kitab asli akan tampil otomatis sesuai referensi yang Anda pilih di atas.
+                </p>
+            </div>
+
+            <!-- State 2: Loading Skeleton State -->
+            <div id="loadingState" class="hidden py-14 px-6 sm:px-8 text-center">
+                <div class="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-5 text-emerald-600 animate-bounce">
+                    <i class="ph-duotone ph-books text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Sedang Menelaah Kitab & Menyusun Tahqiq Dalil...</h3>
+                <p class="text-sm text-slate-500 max-w-md mx-auto mb-6">
+                    AI sedang menelusuri nash Al-Qur'an, Hadits, Ibarat Kitab Turats, dan pendapat ahli sesuai parameter referensi Anda.
+                </p>
+                <div class="max-w-lg mx-auto space-y-3 text-left">
+                    <div class="h-4 bg-slate-100 rounded-full w-3/4 animate-pulse-subtle"></div>
+                    <div class="h-4 bg-slate-100 rounded-full w-full animate-pulse-subtle"></div>
+                    <div class="h-4 bg-slate-100 rounded-full w-5/6 animate-pulse-subtle"></div>
+                </div>
+            </div>
+
+            <!-- State 3: Konten Hasil Jawaban AI -->
+            <div id="resultContent" class="hidden p-5 sm:p-8 space-y-6">
+                <!-- Kotak Ringkasan Pertanyaan & Intisari Hukum -->
+                <div class="rounded-2xl bg-emerald-50/70 border border-emerald-200/80 p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-200/70 px-3 py-1 rounded-full">
+                            <i class="ph-fill ph-check-circle"></i> Kesimpulan & Ringkasan Hukum
+                        </span>
+                        <span id="resultStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-600 text-white">
+                            Tahqiq Ilmiah
+                        </span>
+                    </div>
+                    <p id="resultSummaryText" class="text-slate-800 font-medium text-sm sm:text-base leading-relaxed"></p>
+                </div>
+
+                <!-- Daftar Dalil & Kutipan Kitab Asli Berdasarkan Referensi -->
+                <div class="space-y-4">
+                    <h3 class="text-base font-extrabold text-slate-800 flex items-center gap-2">
+                        <i class="ph-fill ph-scroll text-emerald-600 text-xl"></i>
+                        Rincian Dalil & Kutipan Kitab Asli
+                    </h3>
+                    <div id="dalilListContainer" class="space-y-4"></div>
+                </div>
+
+                <!-- Analisis Istinbath & Uraian Komprehensif -->
+                <div class="rounded-2xl bg-slate-50 border border-slate-200/80 p-5 sm:p-6 space-y-3">
+                    <h3 class="text-base font-extrabold text-slate-800 flex items-center gap-2">
+                        <i class="ph-fill ph-scales text-emerald-600 text-xl"></i>
+                        Analisis Istinbath Hukum & Penjelasan Komprehensif
+                    </h3>
+                    <div id="resultAnalysisText" class="text-slate-700 text-sm sm:text-base leading-relaxed space-y-3"></div>
+                </div>
+
+                <!-- Hikmah & Saran Praktis -->
+                <div class="rounded-2xl bg-amber-50/60 border border-amber-200/70 p-5">
+                    <h4 class="text-sm font-extrabold text-amber-900 flex items-center gap-2 mb-2">
+                        <i class="ph-fill ph-lightbulb-filament text-amber-600 text-lg"></i>
+                        Hikmah & Panduan Amal (Tathbiq)
+                    </h4>
+                    <p id="resultHikmahText" class="text-amber-950/90 text-sm leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Footer Card (Persis Seperti Referensi Gambar) -->
+            <div class="bg-slate-50/80 border-t border-slate-100 py-4 px-6 text-center">
+                <p class="text-[11px] sm:text-xs font-bold tracking-widest text-slate-400 uppercase">
+                    TANYA USTADZ PRO BY MESIN AI - ALL RIGHTS RESERVED 2026
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATA CONTOH PERTANYAAN INTERAKTIF
+        // ==========================================
+        const sampleQuestions = [
+            "Bagaimana hukum transaksi jual beli dengan sistem dropshipping (menjual barang yang belum dimiliki secara fisik) menurut tinjauan Fiqh Muamalah dan ekonom syariah modern?",
+            "Bagaimana hukum menggunakan parfum atau skincare yang mengandung alkohol (etanol) saat melaksanakan sholat? Apakah statusnya najis seperti khamr?",
+            "Bagaimana hukum patungan kurban kambing untuk praktik pembelajaran siswa di sekolah atau sedekah daging, serta bagaimana perbandingannya dalam 4 madzhab?",
+            "Bagaimana pandangan Islam dan psikologi/medis mengenai penanganan gangguan kecemasan berlebih (anxiety disorder) dan was-was dalam beribadah?"
+        ];
+        let sampleIndex = 0;
+
+        // ==========================================
+        // ELEMEN DOM
+        // ==========================================
+        const btnSampleQuestion = document.getElementById('btnSampleQuestion');
+        const questionInput = document.getElementById('questionInput');
+        const refDropdownButton = document.getElementById('refDropdownButton');
+        const refDropdownMenu = document.getElementById('refDropdownMenu');
+        const refDropdownChevron = document.getElementById('refDropdownChevron');
+        const refDropdownSummary = document.getElementById('refDropdownSummary');
+        const activeRefBadges = document.getElementById('activeRefBadges');
+        const toggleAllRefs = document.getElementById('toggleAllRefs');
+        const refCheckboxes = document.querySelectorAll('input[name="refSource"]');
+        const qaForm = document.getElementById('qaForm');
+        const validationMessage = document.getElementById('validationMessage');
+        const validationText = document.getElementById('validationText');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitBtnText = document.getElementById('submitBtnText');
+        const submitIcon = document.getElementById('submitIcon');
+
+        // Elemen Output
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+        const resultContent = document.getElementById('resultContent');
+        const resultActions = document.getElementById('resultActions');
+        const resultSummaryText = document.getElementById('resultSummaryText');
+        const resultStatusBadge = document.getElementById('resultStatusBadge');
+        const dalilListContainer = document.getElementById('dalilListContainer');
+        const resultAnalysisText = document.getElementById('resultAnalysisText');
+        const resultHikmahText = document.getElementById('resultHikmahText');
+        const copyResultBtn = document.getElementById('copyResultBtn');
+        const copyBtnLabel = document.getElementById('copyBtnLabel');
+
+        let lastPlainTextResult = "";
+
+        // ==========================================
+        // LOGIKA DROPDOWN MULTI-REFERENSI & BADGES
+        // ==========================================
+        function updateReferenceUI() {
+            const selected = Array.from(refCheckboxes).filter(cb => cb.checked);
+            activeRefBadges.innerHTML = '';
+
+            if (selected.length === 0) {
+                refDropdownSummary.textContent = "Belum ada referensi dipilih";
+                toggleAllRefs.textContent = "Pilih Semua";
+            } else if (selected.length === refCheckboxes.length) {
+                refDropdownSummary.textContent = `Semua Referensi Dipilih (${selected.length} Sumber Lengkap)`;
+                toggleAllRefs.textContent = "Hapus Semua";
+            } else {
+                refDropdownSummary.textContent = `${selected.length} Sumber Referensi Dipilih`;
+                toggleAllRefs.textContent = "Pilih Semua";
+            }
+
+            selected.forEach(cb => {
+                const badge = document.createElement('span');
+                badge.className = "inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-xl";
+                badge.innerHTML = `
+                    <i class="ph-fill ph-check-circle text-emerald-600"></i>
+                    ${cb.dataset.label}
+                `;
+                activeRefBadges.appendChild(badge);
+            });
+
+            if (selected.length > 0) {
+                validationMessage.classList.add('hidden');
+            }
+        }
+
+        refDropdownButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isHidden = refDropdownMenu.classList.contains('hidden');
+            if (isHidden) {
+                refDropdownMenu.classList.remove('hidden');
+                refDropdownChevron.classList.add('rotate-180');
+            } else {
+                refDropdownMenu.classList.add('hidden');
+                refDropdownChevron.classList.remove('rotate-180');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('referenceDropdownContainer').contains(e.target)) {
+                refDropdownMenu.classList.add('hidden');
+                refDropdownChevron.classList.remove('rotate-180');
+            }
+        });
+
+        refCheckboxes.forEach(cb => {
+            cb.addEventListener('change', updateReferenceUI);
+        });
+
+        toggleAllRefs.addEventListener('click', () => {
+            const allChecked = Array.from(refCheckboxes).every(cb => cb.checked);
+            refCheckboxes.forEach(cb => cb.checked = !allChecked);
+            updateReferenceUI();
+        });
+
+        btnSampleQuestion.addEventListener('click', () => {
+            questionInput.value = sampleQuestions[sampleIndex];
+            sampleIndex = (sampleIndex + 1) % sampleQuestions.length;
+            questionInput.focus();
+        });
+
+        // Inisialisasi tampilan awal badges
+        updateReferenceUI();
+
+        // ==========================================
+        // PEMANGGILAN GEMINI API DENGAN BACKOFF
+        // ==========================================
+        async function fetchWithRetry(url, options, maxRetries = 4) {
+            let delay = 1000;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                    if (attempt === maxRetries) {
+                        throw new Error(`HTTP Error: ${response.status}`);
+                    }
+                } catch (err) {
+                    if (attempt === maxRetries) throw err;
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+        }
+
+        async function generateScholarlyAnswer(question, selectedSources, madzhabFocus, depthLevel) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `Anda adalah "Ustadz Muhaqqiq AI" tingkat tinggi (Faqih, Mufassir, Muhaddits, dan Peneliti Kitab Turats & Kontemporer).
+Tugas Anda adalah menjawab pertanyaan keagamaan pengguna secara sangat ilmiah, beradab, sejuk, dan akuntabel dengan menyertakan dalil/referensi asli dari kitab-kitab mu'tabar sesuai dengan daftar sumber referensi yang dipilih pengguna.
+
+ATURAN KETAT:
+1. Anda WAJIB memaparkan dalil untuk SETIAP kategori sumber referensi yang diminta pengguna: [${selectedSources.join(', ')}].
+2. Untuk setiap kutipan dalil (Al-Qur'an, Al-Hadits, Qoul Sahabat, Qoul Imam Madzhab, Ulama/Hukama Kitab Turats, maupun Fatwa Kontemporer), sertakan:
+   - Teks Arab asli (ibarah kitab / ayat / matan hadits) lengkap dengan harakat yang akurat.
+   - Terjemahan bahasa Indonesia yang jelas.
+   - Nama Kitab / Sumber Asli secara spesifik (Contoh: QS. Al-Baqarah: 275 / Tafsir Ibnu Katsir Juz 1 Hal. 500; HR. Bukhari no. 2052; Al-Majmu' Syarh Al-Muhadzdzab karya Imam An-Nawawi Juz 9 Hal. 257; Fathul Mu'in; Fatwa DSN-MUI, dsb.).
+   - Untuk kategori "Pendapat Ahli Sesuai Pertanyaan", berikan tinjauan ilmiah dari disiplin ilmu yang relevan (misal: Kimia/Farmasi untuk alkohol, Ekonomi untuk muamalah, Kedokteran/Psikologi untuk kesehatan) beserta rujukan keilmuannya.
+3. Fokus pendekatan madzhab: ${madzhabFocus}.
+4. Tingkat kedalaman: ${depthLevel}.`;
+
+            const userQuery = `Pertanyaan: "${question}"
+Sumber Referensi yang Wajib Dipaparkan: ${selectedSources.join(', ')}.
+Fokus Madzhab: ${madzhabFocus}.
+Kedalaman Pemaparan: ${depthLevel}.`;
+
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [{ text: userQuery }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            statusHukumSingkat: {
+                                type: "STRING",
+                                description: "Label singkat status hukum atau topik, misal: 'Mubah (Boleh) dengan Syarat', 'Suci & Sah Sholatnya', 'Tafshil (Rincian Hukum)', dll."
+                            },
+                            ringkasanInti: {
+                                type: "STRING",
+                                description: "Kesimpulan jawaban inti yang merangkum hasil hukum secara lugas dalam 2-4 kalimat."
+                            },
+                            daftarDalil: {
+                                type: "ARRAY",
+                                description: "Daftar dalil yang diurutkan sesuai dengan sumber referensi yang dipilih pengguna.",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        kategoriReferensi: {
+                                            type: "STRING",
+                                            description: "Nama kategori dari dropdown (misal: Al-Qur'an, Al-Hadits, Qoul Sahabat, Qoul Imam Madzhab, Ulama'/Hukama' Semua Bidang Ilmu Agama, Pendapat Ulama Kontemporer/Modern, atau Pendapat Ahli Sesuai Pertanyaan)"
+                                        },
+                                        namaKitabAtauSumber: {
+                                            type: "STRING",
+                                            description: "Nama kitab asli, pengarang, nomor ayat/hadits, atau juz dan halaman (contoh: Kitab Al-Majmu' Syarh Al-Muhadzdzab - Imam An-Nawawi, Juz 9 Hal. 245)"
+                                        },
+                                        teksArabAsli: {
+                                            type: "STRING",
+                                            description: "Kutipan ayat, hadits, atau ibarat kitab kuning berbahasa Arab lengkap dengan harakat. Kosongkan hanya jika murni pendapat sains/medis modern non-Arab."
+                                        },
+                                        terjemahanIndonesia: {
+                                            type: "STRING",
+                                            description: "Terjemahan lengkap dan akurat dari teks Arab atau kutipan pendapat ahli."
+                                        },
+                                        syarahSingkat: {
+                                            type: "STRING",
+                                            description: "Penjelasan/konteks bagaimana dalil atau kitab ini menjawab pertanyaan pengguna."
+                                        }
+                                    },
+                                    required: ["kategoriReferensi", "namaKitabAtauSumber", "teksArabAsli", "terjemahanIndonesia", "syarahSingkat"]
+                                }
+                            },
+                            analisisIstinbath: {
+                                type: "ARRAY",
+                                description: "Paragraf-paragraf analisis mendalam yang memadukan seluruh dalil di atas (wajhul istidlal).",
+                                items: { type: "STRING" }
+                            },
+                            hikmahDanSaran: {
+                                type: "STRING",
+                                description: "Nasihat bijak, adab menyikapi perbedaan pendapat (ikhtilaf), dan panduan praktis bagi penanya."
+                            }
+                        },
+                        required: ["statusHukumSingkat", "ringkasanInti", "daftarDalil", "analisisIstinbath", "hikmahDanSaran"]
+                    }
+                }
+            };
+
+            const data = await fetchWithRetry(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const jsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!jsonText) {
+                throw new Error("Respons dari AI tidak valid atau kosong.");
+            }
+            return JSON.parse(jsonText);
+        }
+
+        // ==========================================
+        // RENDER HASIL KE UI
+        // ==========================================
+        function getCategoryStyle(categoryName) {
+            const lower = (categoryName || "").toLowerCase();
+            if (lower.includes("qur'an") || lower.includes("quran")) {
+                return { icon: "ph-book-open-text", badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-200" };
+            }
+            if (lower.includes("hadits") || lower.includes("hadis")) {
+                return { icon: "ph-scroll", badgeBg: "bg-teal-100 text-teal-800 border-teal-200" };
+            }
+            if (lower.includes("sahabat")) {
+                return { icon: "ph-users-three", badgeBg: "bg-amber-100 text-amber-800 border-amber-200" };
+            }
+            if (lower.includes("madzhab") || lower.includes("mazhab")) {
+                return { icon: "ph-scales", badgeBg: "bg-indigo-100 text-indigo-800 border-indigo-200" };
+            }
+            if (lower.includes("kontemporer") || lower.includes("modern")) {
+                return { icon: "ph-globe-hemisphere-east", badgeBg: "bg-sky-100 text-sky-800 border-sky-200" };
+            }
+            if (lower.includes("ahli")) {
+                return { icon: "ph-flask", badgeBg: "bg-purple-100 text-purple-800 border-purple-200" };
+            }
+            return { icon: "ph-books", badgeBg: "bg-slate-100 text-slate-800 border-slate-200" };
+        }
+
+        function renderAnswer(question, parsed) {
+            resultStatusBadge.textContent = parsed.statusHukumSingkat || "Tahqiq Ilmiah";
+            resultSummaryText.textContent = parsed.ringkasanInti || "";
+
+            // Render Daftar Dalil
+            dalilListContainer.innerHTML = '';
+            let plainTextBuilder = `PERTANYAAN:\n${question}\n\nSTATUS HUKUM: ${parsed.statusHukumSingkat}\nRINGKASAN INTI:\n${parsed.ringkasanInti}\n\n=== RINCIAN DALIL & REFERENSI KITAB ===\n`;
+
+            (parsed.daftarDalil || []).forEach((item, idx) => {
+                const style = getCategoryStyle(item.kategoriReferensi);
+                const card = document.createElement('div');
+                card.className = "rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm space-y-3.5 transition hover:border-emerald-300";
+
+                const arabicBlock = item.teksArabAsli && item.teksArabAsli.trim() !== "" && item.teksArabAsli.trim() !== "-"
+                    ? `<div class="rounded-xl bg-slate-50 border border-slate-100 p-4 text-right">
+                           <p class="arabic-text text-xl sm:text-2xl text-slate-900 font-normal select-all">${item.teksArabAsli}</p>
+                       </div>`
+                    : '';
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-xl border ${style.badgeBg}">
+                            <i class="ph-fill ${style.icon}"></i>
+                            ${idx + 1}. ${item.kategoriReferensi}
+                        </span>
+                        <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 flex items-center gap-1.5">
+                            <i class="ph-bold ph-bookmark-simple"></i>
+                            ${item.namaKitabAtauSumber}
+                        </span>
+                    </div>
+                    ${arabicBlock}
+                    <div class="space-y-2">
+                        <p class="text-sm text-slate-700 italic bg-emerald-50/40 border-l-4 border-emerald-500 pl-3.5 py-1.5 leading-relaxed">
+                            "${item.terjemahanIndonesia}"
+                        </p>
+                        <p class="text-sm text-slate-600 leading-relaxed pt-1">
+                            <span class="font-bold text-slate-800">Penjelasan Dalil:</span> ${item.syarahSingkat}
+                        </p>
+                    </div>
+                `;
+                dalilListContainer.appendChild(card);
+
+                plainTextBuilder += `\n[${idx + 1}] ${item.kategoriReferensi} - ${item.namaKitabAtauSumber}\n`;
+                if (item.teksArabAsli) plainTextBuilder += `${item.teksArabAsli}\n`;
+                plainTextBuilder += `Terjemah: "${item.terjemahanIndonesia}"\nPenjelasan: ${item.syarahSingkat}\n`;
+            });
+
+            // Render Analisis Istinbath
+            resultAnalysisText.innerHTML = '';
+            plainTextBuilder += `\n=== ANALISIS ISTINBATH HUKUM ===\n`;
+            (parsed.analisisIstinbath || []).forEach(paragraph => {
+                const p = document.createElement('p');
+                p.textContent = paragraph;
+                resultAnalysisText.appendChild(p);
+                plainTextBuilder += `${paragraph}\n\n`;
+            });
+
+            // Render Hikmah
+            resultHikmahText.textContent = parsed.hikmahDanSaran || "";
+            plainTextBuilder += `=== HIKMAH & PANDUAN AMAL ===\n${parsed.hikmahDanSaran}\n\n— Dijawab melalui Tanya Ustadz Pro`;
+
+            lastPlainTextResult = plainTextBuilder;
+
+            // Tampilkan Hasil
+            emptyState.classList.add('hidden');
+            loadingState.classList.add('hidden');
+            resultContent.classList.remove('hidden');
+            resultActions.classList.remove('hidden');
+            resultActions.classList.add('flex');
+        }
+
+        // ==========================================
+        // EVENT SUBMIT FORM
+        // ==========================================
+        qaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const question = questionInput.value.trim();
+            const selectedSources = Array.from(refCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (!question) {
+                validationText.textContent = "Silakan tuliskan pertanyaan atau permasalahan Anda terlebih dahulu.";
+                validationMessage.classList.remove('hidden');
+                questionInput.focus();
+                return;
+            }
+
+            if (selectedSources.length === 0) {
+                validationText.textContent = "Pilih minimal satu referensi pengambilan dalil pada menu dropdown.";
+                validationMessage.classList.remove('hidden');
+                return;
+            }
+
+            validationMessage.classList.add('hidden');
+
+            const madzhabFocus = document.getElementById('madzhabSelect').value;
+            const depthLevel = document.getElementById('depthSelect').value;
+
+            // Set UI Loading
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            submitBtnText.textContent = "Sedang Menelaah Kitab & Dalil...";
+            submitIcon.className = "ph-bold ph-spinner animate-spin text-xl";
+
+            emptyState.classList.add('hidden');
+            resultContent.classList.add('hidden');
+            resultActions.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+
+            loadingState.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            try {
+                const parsedAnswer = await generateScholarlyAnswer(question, selectedSources, madzhabFocus, depthLevel);
+                renderAnswer(question, parsedAnswer);
+            } catch (error) {
+                loadingState.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                validationText.textContent = "Maaf, terjadi kendala saat menghubungi peladen AI. Silakan coba klik tombol kirim sekali lagi.";
+                validationMessage.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                submitBtnText.textContent = "Paparkan Jawaban & Dalil Kitab";
+                submitIcon.className = "ph-bold ph-paper-plane-tilt text-xl";
+            }
+        });
+
+        // ==========================================
+        // FITUR SALIN TEKS (CLIPBOARD COMMAND)
+        // ==========================================
+        copyResultBtn.addEventListener('click', () => {
+            if (!lastPlainTextResult) return;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = lastPlainTextResult;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            copyBtnLabel.textContent = "Tersalin!";
+            setTimeout(() => {
+                copyBtnLabel.textContent = "Salin Teks";
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
