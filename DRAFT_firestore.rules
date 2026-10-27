@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 1: Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isValidConsultation(data) {
+      return data.keys().hasAll([
+        'userId',
+        'question',
+        'selectedSources',
+        'madzhabFocus',
+        'depthLevel',
+        'statusHukumSingkat',
+        'ringkasanInti',
+        'daftarDalil',
+        'analisisIstinbath',
+        'hikmahDanSaran',
+        'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId',
+        'question',
+        'selectedSources',
+        'madzhabFocus',
+        'depthLevel',
+        'statusHukumSingkat',
+        'ringkasanInti',
+        'daftarDalil',
+        'analisisIstinbath',
+        'hikmahDanSaran',
+        'createdAt'
+      ]) &&
+      data.userId is string &&
+      data.userId.size() >= 1 &&
+      data.userId.size() <= 128 &&
+      data.userId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.userId == request.auth.uid &&
+      data.question is string &&
+      data.question.size() >= 3 &&
+      data.question.size() <= 2000 &&
+      data.selectedSources is list &&
+      data.selectedSources.size() >= 1 &&
+      data.selectedSources.size() <= 10 &&
+      data.selectedSources[0] is string &&
+      data.madzhabFocus is string &&
+      data.madzhabFocus.size() >= 1 &&
+      data.madzhabFocus.size() <= 200 &&
+      data.depthLevel is string &&
+      data.depthLevel.size() >= 1 &&
+      data.depthLevel.size() <= 200 &&
+      data.statusHukumSingkat is string &&
+      data.statusHukumSingkat.size() >= 1 &&
+      data.statusHukumSingkat.size() <= 300 &&
+      data.ringkasanInti is string &&
+      data.ringkasanInti.size() >= 1 &&
+      data.ringkasanInti.size() <= 5000 &&
+      data.daftarDalil is list &&
+      data.daftarDalil.size() >= 1 &&
+      data.daftarDalil.size() <= 15 &&
+      data.daftarDalil[0] is map &&
+      data.analisisIstinbath is list &&
+      data.analisisIstinbath.size() >= 1 &&
+      data.analisisIstinbath.size() <= 15 &&
+      data.analisisIstinbath[0] is string &&
+      data.hikmahDanSaran is string &&
+      data.hikmahDanSaran.size() >= 1 &&
+      data.hikmahDanSaran.size() <= 5000 &&
+      data.createdAt == request.time;
+    }
+
+    match /consultations/{consultationId} {
+      allow get: if isSignedIn() && isValidId(consultationId) && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && isValidId(consultationId) && isValidConsultation(incoming());
+      allow update: if false;
+      allow delete: if isSignedIn() && isValidId(consultationId) && existing().userId == request.auth.uid;
+    }
+  }
+}

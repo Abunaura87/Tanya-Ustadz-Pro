@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "Consultation": {
+      "title": "Consultation",
+      "description": "Riwayat hasil Bahtsul Masail dan paparan dalil kitab pengguna.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID pengguna Firebase yang menyimpan riwayat konsultasi.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "question": {
+          "type": "string",
+          "description": "Pertanyaan keagamaan yang diajukan pengguna.",
+          "minLength": 3,
+          "maxLength": 2000
+        },
+        "selectedSources": {
+          "type": "array",
+          "description": "Daftar kategori referensi dalil yang dipilih pengguna."
+        },
+        "madzhabFocus": {
+          "type": "string",
+          "description": "Pendekatan fokus madzhab fiqh yang dipilih.",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "depthLevel": {
+          "type": "string",
+          "description": "Tingkat kedalaman pemaparan dalil yang dipilih.",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "statusHukumSingkat": {
+          "type": "string",
+          "description": "Label singkat status hukum hasil tahqiq.",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "ringkasanInti": {
+          "type": "string",
+          "description": "Kesimpulan jawaban inti dari permasalahan.",
+          "minLength": 1,
+          "maxLength": 5000
+        },
+        "daftarDalil": {
+          "type": "array",
+          "description": "Daftar kutipan dalil dan kitab asli sesuai sumber referensi."
+        },
+        "analisisIstinbath": {
+          "type": "array",
+          "description": "Paragraf analisis istinbath hukum komprehensif."
+        },
+        "hikmahDanSaran": {
+          "type": "string",
+          "description": "Hikmah dan panduan amal praktis.",
+          "minLength": 1,
+          "maxLength": 5000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Waktu penyimpanan riwayat konsultasi (ServerTimestamp)."
+        }
+      },
+      "required": [
+        "userId",
+        "question",
+        "selectedSources",
+        "madzhabFocus",
+        "depthLevel",
+        "statusHukumSingkat",
+        "ringkasanInti",
+        "daftarDalil",
+        "analisisIstinbath",
+        "hikmahDanSaran",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/consultations/{consultationId}": {
+      "schema": {
+        "$ref": "#/entities/Consultation"
+      },
+      "description": "Koleksi riwayat konsultasi Bahtsul Masail yang terikat secara eksklusif pada userId pemiliknya."
+    }
+  }
+}
